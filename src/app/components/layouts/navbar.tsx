@@ -10,8 +10,10 @@ import {
     MenuItems
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const navigation = [
     { name: "Dashboard", href: "/" },
@@ -24,12 +26,12 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const {data: session} = useSession();
     const pathname = usePathname();
 
     useEffect(() => {
-        console.log(pathname);
-    }, []);
+        console.log("session: ", session);
+    }, [session]);
 
     return (
         <Disclosure
@@ -109,15 +111,14 @@ export default function Navbar() {
                                 transition
                                 className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 outline -outline-offset-1 outline-white/10 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                             >
-                                {isLoggedIn && (
+                                {session?.user && (
                                     <>
                                         <MenuItem>
-                                            <a
-                                                href="#"
-                                                className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
+                                            <p
+                                                className="block px-4 py-2 text-sm font-bold data-focus:outline-hidden"
                                             >
-                                                Your profile
-                                            </a>
+                                                {session.user.name}
+                                            </p>
                                         </MenuItem>
                                         <MenuItem>
                                             <a
@@ -128,17 +129,17 @@ export default function Navbar() {
                                             </a>
                                         </MenuItem>
                                         <MenuItem>
-                                            <a
-                                                href="#"
+                                            <Link
+                                                href="/api/auth/signout"
                                                 className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
                                             >
                                                 Sign out
-                                            </a>
+                                            </Link>
                                         </MenuItem>
                                     </>
                                 )}
 
-                                {!isLoggedIn && (
+                                {!session?.user && (
                                     <>
                                         <MenuItem>
                                             <a
