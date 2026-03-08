@@ -1,4 +1,58 @@
+"use client";
+
+import { useRouter } from 'next/navigation';
+import { useRef } from "react";
+
+interface registerForm {
+    email: string;
+    name: string;
+    password: string;
+    confirmPassword: string;
+}
+
 export default function RegisterPage() {
+    const router = useRouter()
+
+    const payload = useRef<registerForm>({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
+
+    const handleRegister = async (e: MouseEvent) => {
+        console.log(payload.current);
+        e.preventDefault();
+        const { confirmPassword: _confirmPassword, ...registerData } = payload.current;
+
+        const url = "/backend/auth/register";
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify(registerData),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+
+            router.push('/')
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error(error.message);
+            } else {
+                console.error("An unknown error occurred");
+            }
+        }
+    };
+
     return (
         <>
             {/*
@@ -38,6 +92,9 @@ export default function RegisterPage() {
                                     required
                                     autoComplete="email"
                                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                                    onChange={(e) => {
+                                        payload.current.email = e.target.value;
+                                    }}
                                 />
                             </div>
                         </div>
@@ -56,6 +113,9 @@ export default function RegisterPage() {
                                     type="text"
                                     required
                                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                                    onChange={(e) => {
+                                        payload.current.name = e.target.value;
+                                    }}
                                 />
                             </div>
                         </div>
@@ -77,6 +137,10 @@ export default function RegisterPage() {
                                     required
                                     autoComplete="current-password"
                                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                                    onChange={(e) => {
+                                        payload.current.password =
+                                            e.target.value;
+                                    }}
                                 />
                             </div>
                         </div>
@@ -92,12 +156,15 @@ export default function RegisterPage() {
                             </div>
                             <div className="mt-2">
                                 <input
-                                    id="retypePassword"
-                                    name="retypePassword"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
                                     type="password"
                                     required
-                                    autoComplete="current-password"
                                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                                    onChange={(e) => {
+                                        payload.current.confirmPassword =
+                                            e.target.value;
+                                    }}
                                 />
                             </div>
                         </div>
@@ -106,6 +173,7 @@ export default function RegisterPage() {
                             <button
                                 type="submit"
                                 className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                                onClick={handleRegister}
                             >
                                 Sign in
                             </button>
