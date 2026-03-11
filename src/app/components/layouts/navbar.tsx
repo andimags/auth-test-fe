@@ -10,10 +10,10 @@ import {
     MenuItems
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 const navigation = [
     { name: "Dashboard", href: "/" },
@@ -21,7 +21,7 @@ const navigation = [
     { name: "Register", href: "/register" }
 ];
 
-function classNames(...classes) {
+function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 

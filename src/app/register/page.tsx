@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useRef } from "react";
+import { MouseEvent, useRef } from "react";
 
 interface registerForm {
     email: string;
@@ -20,7 +20,7 @@ export default function RegisterPage() {
         confirmPassword: ""
     });
 
-    const handleRegister = async (e: MouseEvent) => {
+    const handleRegister = async (e: MouseEvent<HTMLButtonElement>) => {
         console.log(payload.current);
         e.preventDefault();
         const { confirmPassword: _confirmPassword, ...registerData } = payload.current;
